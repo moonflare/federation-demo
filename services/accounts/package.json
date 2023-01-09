@@ -4,8 +4,8 @@
     "start": "node index.js"
   },
   "dependencies": {
-    "@apollo/federation": "latest",
-    "apollo-server": "latest",
-    "graphql": "latest"
+    "@apollo/server": "^4.3.0",
+    "@apollo/subgraph": "^2.3.0-alpha.0",
+    "graphql": "16.6.0"
   }
 }
