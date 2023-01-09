@@ -1,9 +1,13 @@
-const { ApolloServer, gql } = require("apollo-server");
-const { buildFederatedSchema } = require("@apollo/federation");
+const { ApolloServer } = require('@apollo/server');
+const { startStandaloneServer } = require('@apollo/server/standalone');
+const { buildSubgraphSchema } = require('@apollo/subgraph');
+const gql = require('graphql-tag');
 
 const typeDefs = gql`
-  extend type Product @key(fields: "upc") {
-    upc: String! @external
+  extend schema @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@key", "@external", "@interfaceObject", "@provides", "@requires"])
+
+  extend type Product @key(fields: "id") @interfaceObject {
+    id: String! @external
     weight: Int @external
     price: Int @external
     inStock: Boolean
@@ -16,7 +20,7 @@ const resolvers = {
     __resolveReference(object) {
       return {
         ...object,
-        ...inventory.find(product => product.upc === object.upc)
+        ...inventory.find(product => product.id === object.id)
       };
     },
     shippingEstimate(object) {
@@ -29,20 +33,15 @@ const resolvers = {
 };
 
 const server = new ApolloServer({
-  schema: buildFederatedSchema([
-    {
-      typeDefs,
-      resolvers
-    }
-  ])
+  schema: buildSubgraphSchema({ typeDefs, resolvers }),
 });
 
-server.listen({ port: 4004 }).then(({ url }) => {
-  console.log(`🚀 Server ready at ${url}`);
-});
+
+startStandaloneServer(server, { listen: 4004 }).then(({ url }) => console.log(`🚀  Server ready at ${url}`));
+
 
 const inventory = [
-  { upc: "1", inStock: true },
-  { upc: "2", inStock: false },
-  { upc: "3", inStock: true }
+  { id: "1", inStock: true },
+  { id: "2", inStock: false },
+  { id: "3", inStock: true }
 ];
