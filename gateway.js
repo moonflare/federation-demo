@@ -1,4 +1,5 @@
-const { ApolloServer } = require("apollo-server");
+const { ApolloServer } = require('@apollo/server');
+const { startStandaloneServer } = require('@apollo/server/standalone');
 const { ApolloGateway, IntrospectAndCompose } = require("@apollo/gateway");
 
 const supergraphSdl = new IntrospectAndCompose({
@@ -34,7 +35,6 @@ const gateway = new ApolloGateway({
     subscriptions: false,
   });
 
-  server.listen().then(({ url }) => {
-    console.log(`🚀 Server ready at ${url}`);
-  });
+  const { url } = await startStandaloneServer(server);
+  console.log(`🚀  Server ready at ${url}`);
 })();
