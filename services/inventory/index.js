@@ -7,11 +7,10 @@ const typeDefs = gql`
   extend schema @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@key", "@external", "@interfaceObject", "@provides", "@requires"])
 
   extend type Product @key(fields: "id") @interfaceObject {
-    id: String! @external
-    weight: Int @external
-    price: Int @external
+    id: ID! @external
+    price: Float @external
     inStock: Boolean
-    shippingEstimate: Int @requires(fields: "price weight")
+    shippingEstimate: Int @requires(fields: "price")
   }
 `;
 
@@ -27,7 +26,7 @@ const resolvers = {
       // free for expensive items
       if (object.price > 1000) return 0;
       // estimate is based on weight
-      return object.weight * 0.5;
+      return object.price + 30;
     }
   }
 };
@@ -43,5 +42,8 @@ startStandaloneServer(server, { listen: 4004 }).then(({ url }) => console.log(`ð
 const inventory = [
   { id: "1", inStock: true },
   { id: "2", inStock: false },
-  { id: "3", inStock: true }
+  { id: "3", inStock: true },
+  { id: "4", inStock: false },
+  { id: "5", inStock: true },
+  { id: "6", inStock: true }
 ];

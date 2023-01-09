@@ -4,7 +4,7 @@ const { buildSubgraphSchema } = require('@apollo/subgraph');
 const gql = require('graphql-tag');
 
 const typeDefs = gql`
-  extend schema @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@key"])
+  extend schema @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@key", "@shareable"])
 
   extend type Query {
     me: User
@@ -13,7 +13,7 @@ const typeDefs = gql`
   type User @key(fields: "id") {
     id: ID!
     name: String
-    username: String
+    username: String @shareable
   }
 `;
 

@@ -1,4 +1,3 @@
-
 const { ApolloServer } = require('@apollo/server');
 const { startStandaloneServer } = require('@apollo/server/standalone');
 const { buildSubgraphSchema } = require('@apollo/subgraph');
@@ -21,7 +20,7 @@ const typeDefs = gql`
   }
 
   extend type Product @key(fields: "id") @interfaceObject {
-    id: String!
+    id: ID!
     reviews: [Review]
   }
 `;
@@ -55,7 +54,7 @@ const server = new ApolloServer({
   schema: buildSubgraphSchema({ typeDefs, resolvers }),
 });
 
-// Note the top level await!
+
 startStandaloneServer(server, { listen: 4002 }).then(({ url }) => console.log(`🚀  Server ready at ${url}`));
 
 const usernames = [
