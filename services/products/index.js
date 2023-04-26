@@ -8,7 +8,7 @@ const typeDefs = gql`
   extend schema @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@key"])
 
   extend type Query {
-    topProducts(first: Int = 5): [Product] @federation__shareable
+    topProducts(first: Int = 5): [Product]
   }
 
   interface Product @key(fields: "id") {
@@ -17,14 +17,14 @@ const typeDefs = gql`
     price: Float
   }
 
-  type Book implements Product @key(fields: "id") @federation__shareable {
+  type Book implements Product @key(fields: "id") {
     id: ID!
     name: String!
     price: Float
     pages: Int
   }
 
-  type Movie implements Product @key(fields: "id") @federation__shareable {
+  type Movie implements Product @key(fields: "id") {
     id: ID!
     name: String!
     price: Float

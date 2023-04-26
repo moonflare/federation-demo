@@ -4,15 +4,13 @@ const { buildSubgraphSchema } = require('@apollo/subgraph');
 const gql = require('graphql-tag');
 
 const typeDefs = gql`
-  extend schema @link(url: "https://specs.apollo.dev/federation/v2.0", import: ["@key", "@external", "@provides"])
-
-  directive @federation__interfaceObject on OBJECT
+  extend schema @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@key", "@external", "@provides"])
 
   type Review @key(fields: "id") {
     id: ID!
     body: String
     author: User @provides(fields: "username")
-    product: Product
+    product: Book
   }
 
   extend type User @key(fields: "id") {
@@ -21,7 +19,7 @@ const typeDefs = gql`
     reviews: [Review]
   }
 
-  extend type Product @key(fields: "id") @federation__interfaceObject {
+  type Book @key(fields: "id") {
     id: ID!
     reviews: [Review]
   }
@@ -45,7 +43,7 @@ const resolvers = {
       return found ? found.username : null;
     }
   },
-  Product: {
+  Book: {
     reviews(product) {
       return reviews.filter(review => review.product.id === product.id);
     }
