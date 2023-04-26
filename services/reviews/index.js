@@ -4,7 +4,9 @@ const { buildSubgraphSchema } = require('@apollo/subgraph');
 const gql = require('graphql-tag');
 
 const typeDefs = gql`
-  extend schema @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@key", "@external", "@interfaceObject", "@provides"])
+  extend schema @link(url: "https://specs.apollo.dev/federation/v2.0", import: ["@key", "@external", "@provides"])
+
+  directive @federation__interfaceObject on OBJECT
 
   type Review @key(fields: "id") {
     id: ID!
@@ -19,7 +21,7 @@ const typeDefs = gql`
     reviews: [Review]
   }
 
-  extend type Product @key(fields: "id") @interfaceObject {
+  extend type Product @key(fields: "id") @federation__interfaceObject {
     id: ID!
     reviews: [Review]
   }

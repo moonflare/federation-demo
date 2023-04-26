@@ -5,7 +5,7 @@ const { buildSubgraphSchema } = require('@apollo/subgraph');
 const gql = require('graphql-tag');
 
 const typeDefs = gql`
-  extend schema @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@key"])
+  extend schema @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@key", "@interfaceObject"])
 
   extend type Query {
     topProducts(first: Int = 5): [Product] @federation__shareable
@@ -14,21 +14,19 @@ const typeDefs = gql`
   interface Product @key(fields: "id") {
     id: ID!
     name: String!
-    price: Float
+    description: String
   }
 
   type Book implements Product @key(fields: "id") @federation__shareable {
     id: ID!
     name: String!
-    price: Float
-    pages: Int
+    description: String
   }
 
   type Movie implements Product @key(fields: "id") @federation__shareable {
     id: ID!
     name: String!
-    price: Float
-    duration: Int
+    description: String
   }
 `;
 
@@ -50,19 +48,21 @@ const server = new ApolloServer({
 });
 
 
-startStandaloneServer(server, { listen: 4003 }).then(({ url }) => console.log(`🚀  Server ready at ${url}`));
+startStandaloneServer(server, { listen: 4009 }).then(({ url }) => console.log(`🚀  Server ready at ${url}`));
 
 const products = [
   {
     id: "1",
     __typename: "Book",
+    description: "Learning GraphQL: Declarative Data Fetching for Modern Web Apps description",
     name: "Learning GraphQL: Declarative Data Fetching for Modern Web Apps",
-    price: 399,
+    price: 39,
     pages: 196
   },
   {
     id: "2",
     __typename: "Book",
+    description: "The Road to GraphQL: Your journey to master pragmatic GraphQL in JavaScript with React.js and Node.js",
     name: "The Road to GraphQL: Your journey to master pragmatic GraphQL in JavaScript with React.js and Node.js",
     price: 23,
     pages: 352
@@ -70,6 +70,7 @@ const products = [
   {
     id: "3",
     __typename: "Movie",
+    description: "Avatar: The Way of Water",
     name: "Avatar: The Way of Water",
     price: 30,
     duration: 192
@@ -77,6 +78,7 @@ const products = [
   {
     id: "4",
     __typename: "Book",
+    description: "GraphQL in Action",
     name: "GraphQL in Action",
     price: 19,
     pages: 384
@@ -84,6 +86,7 @@ const products = [
   {
     id: "5",
     __typename: "Movie",
+    description: "Parasite",
     name: "Parasite",
     price: 53,
     duration: 132
@@ -91,6 +94,7 @@ const products = [
   {
     id: "6",
     __typename: "Movie",
+    description: "Deadpool",
     name: "Deadpool",
     price: 25,
     duration: 108
