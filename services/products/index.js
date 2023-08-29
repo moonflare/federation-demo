@@ -5,7 +5,7 @@ const { buildSubgraphSchema } = require('@apollo/subgraph');
 const gql = require('graphql-tag');
 
 const typeDefs = gql`
-  extend schema @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@key"])
+  extend schema @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@key", "@shareable"])
 
   extend type Query {
     topProducts(first: Int = 5): [Product]
@@ -17,14 +17,14 @@ const typeDefs = gql`
     price: Float
   }
 
-  type Book implements Product @key(fields: "id") {
+  type Book implements Product @key(fields: "id") @shareable {
     id: ID!
     name: String!
     price: Float
     pages: Int
   }
 
-  type Movie implements Product @key(fields: "id") {
+  type Movie implements Product @key(fields: "id") @shareable {
     id: ID!
     name: String!
     price: Float

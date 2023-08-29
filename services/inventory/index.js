@@ -4,11 +4,12 @@ const { buildSubgraphSchema } = require('@apollo/subgraph');
 const gql = require('graphql-tag');
 
 const typeDefs = gql`
-  extend schema @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@key", "@external", "@interfaceObject", "@provides", "@requires"])
+  extend schema @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@key", "@external", "@interfaceObject", "@provides", "@requires", "@shareable"])
 
   extend type Product @key(fields: "id") @interfaceObject {
     id: ID! @external
     price: Float @external
+    name: String! @shareable
     inStock: Boolean
     shippingEstimate: Int @requires(fields: "price")
   }
@@ -21,6 +22,9 @@ const resolvers = {
         ...object,
         ...inventory.find(product => product.id === object.id)
       };
+    },
+    name(object) {
+      return `Product: ${object.id}!`;
     },
     shippingEstimate(object) {
       // free for expensive items

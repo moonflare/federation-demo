@@ -4,13 +4,13 @@ const { buildSubgraphSchema } = require('@apollo/subgraph');
 const gql = require('graphql-tag');
 
 const typeDefs = gql`
-  extend schema @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@key", "@external", "@provides"])
+  extend schema @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@key", "@external", "@provides", "@interfaceObject", "@shareable"])
 
   type Review @key(fields: "id") {
     id: ID!
     body: String
     author: User @provides(fields: "username")
-    product: Book
+    product: Product
   }
 
   extend type User @key(fields: "id") {
@@ -19,9 +19,8 @@ const typeDefs = gql`
     reviews: [Review]
   }
 
-  type Book @key(fields: "id") {
+  type Product @key(fields: "id") @interfaceObject {
     id: ID!
-    reviews: [Review]
   }
 `;
 
@@ -43,11 +42,14 @@ const resolvers = {
       return found ? found.username : null;
     }
   },
-  Book: {
-    reviews(product) {
-      return reviews.filter(review => review.product.id === product.id);
-    }
-  }
+  // Product: {
+  //   reviews(product) {
+  //     return reviews.filter(review => review.product.id === product.id);
+  //   },
+  //   name(product) {
+  //     return `Product: ${product.id}`;
+  //   }
+  // }
 };
 
 const server = new ApolloServer({
