@@ -1,7 +1,11 @@
-const { ApolloServer, gql } = require("apollo-server");
-const { buildFederatedSchema } = require("@apollo/federation");
+const { ApolloServer } = require('@apollo/server');
+const { startStandaloneServer } = require('@apollo/server/standalone');
+const { buildSubgraphSchema } = require('@apollo/subgraph');
+const gql = require('graphql-tag');
 
 const typeDefs = gql`
+  extend schema @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@key", "@external", "@provides", "@interfaceObject", "@shareable"])
+
   type Review @key(fields: "id") {
     id: ID!
     body: String
@@ -15,9 +19,8 @@ const typeDefs = gql`
     reviews: [Review]
   }
 
-  extend type Product @key(fields: "upc") {
-    upc: String! @external
-    reviews: [Review]
+  type Product @key(fields: "id") @interfaceObject {
+    id: ID!
   }
 `;
 
@@ -39,25 +42,22 @@ const resolvers = {
       return found ? found.username : null;
     }
   },
-  Product: {
-    reviews(product) {
-      return reviews.filter(review => review.product.upc === product.upc);
-    }
-  }
+  // Product: {
+  //   reviews(product) {
+  //     return reviews.filter(review => review.product.id === product.id);
+  //   },
+  //   name(product) {
+  //     return `Product: ${product.id}`;
+  //   }
+  // }
 };
 
 const server = new ApolloServer({
-  schema: buildFederatedSchema([
-    {
-      typeDefs,
-      resolvers
-    }
-  ])
+  schema: buildSubgraphSchema({ typeDefs, resolvers }),
 });
 
-server.listen({ port: 4002 }).then(({ url }) => {
-  console.log(`🚀 Server ready at ${url}`);
-});
+
+startStandaloneServer(server, { listen: 4002 }).then(({ url }) => console.log(`🚀  Server ready at ${url}`));
 
 const usernames = [
   { id: "1", username: "@ada" },
@@ -67,25 +67,25 @@ const reviews = [
   {
     id: "1",
     authorID: "1",
-    product: { upc: "1" },
+    product: { id: "1" },
     body: "Love it!"
   },
   {
     id: "2",
     authorID: "1",
-    product: { upc: "2" },
+    product: { id: "2" },
     body: "Too expensive."
   },
   {
     id: "3",
     authorID: "2",
-    product: { upc: "3" },
+    product: { id: "3" },
     body: "Could be better."
   },
   {
     id: "4",
     authorID: "2",
-    product: { upc: "1" },
+    product: { id: "1" },
     body: "Prefer something else."
   }
 ];
